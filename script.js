@@ -2,13 +2,23 @@ const html = document.querySelector('html');
 const botonCorto = document.querySelector('.app__card-button--corto');
 const botonEnfoque = document.querySelector('.app__card-button--enfoque');
 const botonLargo = document.querySelector('.app__card-button--largo');
-const banner = document.querySelector('.app__image')
-const titulo =document.querySelector('.app__title')
-const botones = document.querySelectorAll('.app__card-button')
-const inputEnfoqueMusica= document.querySelector('#alternar-musica')
-const musica = new Audio('./sonidos/luna-rise-part-one.mp3')
+const banner = document.querySelector('.app__image');
+const titulo =document.querySelector('.app__title');
+const botones = document.querySelectorAll('.app__card-button');
+const inputEnfoqueMusica= document.querySelector('#alternar-musica');
+const musica = new Audio('./sonidos/luna-rise-part-one.mp3');
+const botonIniciarPausar = document.querySelector('#start-pause');
 
-musica.loop =true
+const audioBeep = new Audio('./sonidos/beep.mp3');
+const audioPlay = new Audio('./sonidos/play.wav');
+const audioPause = new Audio('./sonidos/pause.mp3');
+
+let tiempoTranscurridoenSegundos = 5;
+let idIntervalo = null;
+
+musica.loop =true;
+
+
 
 inputEnfoqueMusica.addEventListener('change',()=>{
     if (musica.paused){
@@ -71,4 +81,35 @@ function cambiarContexto (contexto) {
             break;
     }
     
+}
+
+const cuentaRegresiva = ()=>{
+    if (tiempoTranscurridoenSegundos <= 0){
+        reiniciar();
+        audioBeep.play()
+        alert('tiempo final');
+        return;
+        
+    } 
+    tiempoTranscurridoenSegundos -= 1
+    console.log("temporizador: " + tiempoTranscurridoenSegundos)
+
+}
+
+
+botonIniciarPausar.addEventListener('click',iniciarPausar);
+
+function iniciarPausar(){
+
+    if(idIntervalo){
+        audioPause.play();
+        reiniciar();
+        return;
+    }
+    audioPlay.play();
+    idIntervalo = setInterval(cuentaRegresiva,1000)
+}
+function reiniciar (){    
+    clearInterval(idIntervalo)
+    idIntervalo = null
 }
