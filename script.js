@@ -13,7 +13,12 @@ const audioBeep = new Audio('./sonidos/beep.mp3');
 const audioPlay = new Audio('./sonidos/play.wav');
 const audioPause = new Audio('./sonidos/pause.mp3');
 
-let tiempoTranscurridoenSegundos = 5;
+const textoIniciarPausar = document.querySelector('#start-pause span');
+const iconoIniciarPausar = document.querySelector('.app__card-primary-butto-icon');
+
+const tiempoEnPantalla = document.querySelector('#timer')
+
+let tiempoTranscurridoenSegundos = 1500;
 let idIntervalo = null;
 
 musica.loop =true;
@@ -22,31 +27,34 @@ musica.loop =true;
 
 inputEnfoqueMusica.addEventListener('change',()=>{
     if (musica.paused){
-        musica.play()
+        musica.play();
 
     } else{
-        musica.pause()
+        musica.pause();
     }
 })
 
 botonCorto.addEventListener('click', () => {
-    cambiarContexto ('descanso-corto')
-    botonCorto.classList.add('active')
+    tiempoTranscurridoenSegundos = 300;
+    cambiarContexto ('descanso-corto');
+    botonCorto.classList.add('active');
 });
 
 botonEnfoque.addEventListener('click', () => {
-    cambiarContexto ('enfoque')
-    botonEnfoque.classList.add('active')
+    tiempoTranscurridoenSegundos = 1500;
+    cambiarContexto ('enfoque');
+    botonEnfoque.classList.add('active');
 
 });
 botonLargo.addEventListener('click', () => {
-    cambiarContexto ('descanso-largo')
-    botonLargo.classList.add('active')
+    tiempoTranscurridoenSegundos = 900;
+    cambiarContexto ('descanso-largo');
+    botonLargo.classList.add('active');
 });
 
 
 function cambiarContexto (contexto) {
-
+    mostrarTiempo();
     botones.forEach(function (contexto) {
         contexto.classList.remove('active');
 
@@ -91,8 +99,9 @@ const cuentaRegresiva = ()=>{
         return;
         
     } 
-    tiempoTranscurridoenSegundos -= 1
-    console.log("temporizador: " + tiempoTranscurridoenSegundos)
+    textoIniciarPausar.textContent = "Pausar";
+    tiempoTranscurridoenSegundos -= 1;
+    mostrarTiempo ();
 
 }
 
@@ -102,14 +111,25 @@ botonIniciarPausar.addEventListener('click',iniciarPausar);
 function iniciarPausar(){
 
     if(idIntervalo){
+    iconoIniciarPausar.setAttribute('src',`./imagenes/play_arrow.png`);
         audioPause.play();
         reiniciar();
         return;
     }
     audioPlay.play();
     idIntervalo = setInterval(cuentaRegresiva,1000)
+    iconoIniciarPausar.setAttribute('src',`./imagenes/pause.png`);
 }
 function reiniciar (){    
     clearInterval(idIntervalo)
-    idIntervalo = null
+    textoIniciarPausar.textContent= "Comenzar";
+    iconoIniciarPausar.setAttribute('src', `./imagenes/play_arrow.png`);
+    idIntervalo = null;
 }
+
+function mostrarTiempo(){
+    const tiempo = new Date(tiempoTranscurridoenSegundos *1000 ) 
+    const tiempoFormateado = tiempo.toLocaleTimeString('es-AR', {minute: '2-digit' ,second:'2-digit'})
+    tiempoEnPantalla.innerHTML = `${tiempoFormateado}`
+}
+mostrarTiempo();
